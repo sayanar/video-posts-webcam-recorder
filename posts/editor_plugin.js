@@ -17,7 +17,7 @@
                                 ed.windowManager.open({
                                         file : url + '/recorder.htm',
                                         width : 920 + ed.getLang('recorder.delta_width', 0),
-                                        height : 420 + ed.getLang('recorder.delta_height', 0),
+                                        height : 500 + ed.getLang('recorder.delta_height', 0),
                                         inline : 1
                                 }, {
                                         plugin_url : url, // Plugin absolute URL
