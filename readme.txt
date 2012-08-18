@@ -10,7 +10,9 @@ Requires at least: 2.7
 Tested up to: 3.4.1
 Stable tag: trunk
 
-The Video Posts Webcam Recorder allows the WordPress administrators and authors to record and insert videos in their posts.
+The Video Posts Webcam Recorder allows the WordPress administrators and authors to record and insert videos in their posts. A supported rtmp host is required.
+
+Can playback with JwPlayer plugin, if available.
 
 == Description ==
 The Video Posts Webcam Recorder allows the WordPress administrators and authors to record and insert videos in their posts.
@@ -43,6 +45,11 @@ See a video posted with this plugin on: http://www.videochat-scripts.com/webcam-
 More information, the latest updates, other plugins and non-WordPress editions can be found at http://www.videowhisper.com/ .
 
 == Changelog ==
+
+= 1.45.2 =
+* Shortcodes for easier use
+* Support for JwPlayer Plugin http://wordpress.org/extend/plugins/jw-player-plugin-for-wordpress/
+* More settings
 
 = 1.45 =
 * First release
