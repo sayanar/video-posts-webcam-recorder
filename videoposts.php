@@ -3,7 +3,7 @@
 Plugin Name: Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
 Description: Video Posts Webcam Recorder
-Version: 1.45.3
+Version: 1.45.4
 Author: VideoWhisper.com
 Author URI: http://www.videowhisper.com/
 Contributors: videowhisper, VideoWhisper.com
@@ -83,7 +83,7 @@ if (!class_exists("VWvideoPosts"))
 		
 		$poweredby = '<div style=\'display: ' . $state . ';\'><i><small>Powered by <a href=\'http://www.videowhisper.com\'  target=\'_blank\'>VideoWhisper</a>,<a href=\'http://www.videowhisper.com/?p=Video+Recorder\'  target=\'_blank\'> Video Recorder</a>.</small></i></div>';
 		
-		preg_match_all("/\[videowhisper stream=\"([a-zA-Z0-9_\-]*)\"\]/i",$content,$matches);
+		preg_match_all("/\[videowhisper stream=\"([a-zA-Z0-9_\-\s]*)\"\]/i",$content,$matches);
 		//var_dump($matches);
 		$result = $content;
 		//echo $content;

@@ -47,8 +47,11 @@ More information, the latest updates, other plugins and non-WordPress editions c
 
 == Changelog ==
 
+= 1.45.4 =
+* Support stream names with spaces fix
+
 = 1.45.3 =
-* Folder location fix
+* Folder location fix (from videoposts to 
 
 = 1.45.2 =
 * Shortcodes for code reliability
