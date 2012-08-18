@@ -47,8 +47,11 @@ More information, the latest updates, other plugins and non-WordPress editions c
 
 == Changelog ==
 
+= 1.45.3 =
+* Folder location fix
+
 = 1.45.2 =
-* Shortcodes for easier use
+* Shortcodes for code reliability
 * Support for JwPlayer Plugin http://wordpress.org/extend/plugins/jw-player-plugin-for-wordpress/
 * More settings
 

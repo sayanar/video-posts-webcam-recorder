@@ -3,7 +3,7 @@
 Plugin Name: Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
 Description: Video Posts Webcam Recorder
-Version: 1.45.2
+Version: 1.45.3
 Author: VideoWhisper.com
 Author URI: http://www.videowhisper.com/
 Contributors: videowhisper, VideoWhisper.com
@@ -29,7 +29,7 @@ function register_videoposts_button($buttons) {
  
 // Load the TinyMCE plugin : editor_plugin.js (wp2.5)
 function add_videoposts_tinymce_plugin($plugin_array) {
-   $plugin_array['recorder'] = home_url().'/wp-content/plugins/videoposts/posts/editor_plugin.js';
+   $plugin_array['recorder'] = home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/editor_plugin.js';
    return $plugin_array;
 }
  
@@ -96,12 +96,12 @@ if (!class_exists("VWvideoPosts"))
 			{
 				case 'vwplayer':
 				$playercode = <<<EOD
-<u>$streamname</u><div  style='width:$embedWidth px; height:$embedHeight px'><object height="100%" width="100%"><param name="movie" value=" $home/wp-content/plugins/videoposts/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\"><param name="scale" value="noscale"><param name="salign" value="lt"><param name="base" value="$home/wp-content/plugins/videoposts/posts/videowhisper/"><param name="allowFullScreen" value="true"><param name="allowscriptaccess" value="always"><embed base="$home/wp-content/plugins/videoposts/posts/videowhisper/"  scale="noscale" salign="lt" src=" $home/wp-content/plugins/videoposts/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" height="$embedHeight px" width="$embedWidth px"></object></div></div>$poweredby
+<u>$streamname</u><div  style='width:$embedWidth px; height:$embedHeight px'><object height="100%" width="100%"><param name="movie" value=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\"><param name="scale" value="noscale"><param name="salign" value="lt"><param name="base" value="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"><param name="allowFullScreen" value="true"><param name="allowscriptaccess" value="always"><embed base="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"  scale="noscale" salign="lt" src=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" height="$embedHeight px" width="$embedWidth px"></object></div></div>$poweredby
 EOD;
 	
 				break;
 				case 'jwplayer':
-				$image = file_exists("wp-content/plugins/videoposts/posts/videowhisper/snapshots/$streamname.jpg")?$home."/wp-content/plugins/videoposts/posts/videowhisper/snapshots/$streamname.jpg":$home."/wp-content/plugins/videoposts/posts/videowhisper/snapshots/no_video.png";
+				$image = file_exists("wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/$streamname.jpg")?$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/$streamname.jpg":$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/no_video.png";
 				$playercode = <<<EOD
 <u>$streamname</u><div id='jwplayer1' style='width: ${embedWidth}px; height: ${embedHeight}px'><script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'></script><script type='text/javascript'>var flashvars = { file: '$streamname', streamer: '$rtmp_server', autostart: '$autoplay',width: '${embedWidth}px', height: '${embedHeight}px', type: 'rtmp', image: '$image' }; swfobject.embedSWF('$home/wp-content/uploads/jw-player-plugin-for-wordpress/player/player.swf','jwplayer1','$embedWidth px','$embedHeight px','9','false', flashvars,  {allowfullscreen:'true',allowscriptaccess:'always'},   {id:'jwplayer',name:'jwplayer'}  );</script></div></div>$poweredby
 EOD;
@@ -401,23 +401,23 @@ Example: /home/youraccount/public_html/streams/
 			{
 			echo "<tr>";
 				echo "<td>";
-				echo "<a href= ".home_url().'/wp-content/plugins/videoposts/posts/videowhisper/streamplay.php?vid='.$item->streamname." target='_blank'>";
-				if(file_exists('../'.$file = 'wp-content/plugins/videoposts/posts/videowhisper/snapshots/'.$item->streamname.'.jpg')) 
+				echo "<a href= ".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname." target='_blank'>";
+				if(file_exists('../'.$file = 'wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/'.$item->streamname.'.jpg')) 
 				{
 					echo "<img src=".home_url().'/'.$file.">";
 				}
 				else
 				{
-					echo "<img src=".home_url().'/wp-content/plugins/videoposts/posts/videowhisper/snapshots/no_video.png'.">";
+					echo "<img src=".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/no_video.png'.">";
 				}
 				echo "</a>";
 				echo "</td>";
 				echo "<td>";
-				echo "<a href= ".home_url().'/wp-content/plugins/videoposts/posts/videowhisper/streamplay.php?vid='.$item->streamname.'&postid='.$item->postId." target='_blank'><B>".$item->streamname."</B></a>";
+				echo "<a href= ".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname.'&postid='.$item->postId." target='_blank'><B>".$item->streamname."</B></a>";
 				echo " <BR><BR> ";
 				echo "<a href=".home_url().'?p='.$item->postId." target='_blank'><B> View Post </B></a>";
 				echo " <BR> ";
-				echo "<a href=".home_url().'/wp-content/plugins/videoposts/posts/videowhisper/recorded_videos.php?delete='. urlencode($item->streamname).'&postid='.$item->postId." target='_blank'><B> Delete this Recording </B></a>";
+				echo "<a href=".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/recorded_videos.php?delete='. urlencode($item->streamname).'&postid='.$item->postId." target='_blank'><B> Delete this Recording </B></a>";
 				echo " <BR> ";
 				echo date("D M j G:i:s T Y",$item->time);
 				echo " <BR> ";
