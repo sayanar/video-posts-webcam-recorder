@@ -3,7 +3,7 @@
 Plugin Name: Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
 Description: Video Posts Webcam Recorder
-Version: 1.55
+Version: 1.55.2
 Author: VideoWhisper.com
 Author URI: http://www.videowhisper.com/
 Contributors: videowhisper, VideoWhisper.com
