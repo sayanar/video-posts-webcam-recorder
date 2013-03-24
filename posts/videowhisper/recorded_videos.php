@@ -64,6 +64,11 @@ if($loggedin == 1)
 		
 		if (file_exists($file = "recordings/" . $rec  . ".vwr")) unlink($file);
 		
+		if (file_exists($file = $delete_from . $rec  . "-ip.mp4")) unlink($file);
+		if (file_exists($file = $delete_from . $rec  . ".log")) unlink($file);
+		if (file_exists($file = $delete_from . $rec  . ".ogv")) unlink($file);
+		if (file_exists($file = $delete_from . $rec  . "-ogv.log")) unlink($file);
+		
 		if (file_exists($file = "snapshots/" . $rec  . ".jpg")) unlink($file);
 		
 	}

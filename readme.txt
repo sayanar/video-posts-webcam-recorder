@@ -7,12 +7,12 @@ Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder
 Donate link: http://www.videowhisper.com/?p=Invest
 Tags: video, flash, fms, red5, wowza, audio, plugin, media, av, clip, recorder, recording, webcam, cam, post, posts, WYSIWYG, editor, share, insert, camera
 Requires at least: 2.7
-Tested up to: 3.4.1
+Tested up to: 3.5.1
 Stable tag: trunk
 
 The Video Posts Webcam Recorder allows the WordPress administrators and authors to record and insert videos in their posts. A supported rtmp host is required.
 
-Supports playback with JwPlayer plugin.
+Supports playback with JwPlayer plugin and HTML5 playback if conversion is supported by host.
 
 == Description ==
 The Video Posts Webcam Recorder allows the WordPress administrators and authors to record and insert videos in their posts.
@@ -46,6 +46,11 @@ See a video posted with this plugin on: http://www.videochat-scripts.com/webcam-
 More information, the latest updates, other plugins and non-WordPress editions can be found at http://www.videowhisper.com/ .
 
 == Changelog ==
+
+= 1.55 =
+* Integrates VideoWhisper Video Recorder 1.55
+* HTML5 playback support (if conversion is possible)
+* Import previous recording in posts
 
 = 1.45.4 =
 * Support stream names with spaces fix

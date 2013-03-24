@@ -3,7 +3,7 @@
 Plugin Name: Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
 Description: Video Posts Webcam Recorder
-Version: 1.45.4
+Version: 1.55
 Author: VideoWhisper.com
 Author URI: http://www.videowhisper.com/
 Contributors: videowhisper, VideoWhisper.com
@@ -24,12 +24,14 @@ function videoposts_addbuttons() {
  
 function register_videoposts_button($buttons) {
    array_push($buttons, "separator", "recorder");
+   array_push($buttons, "separator", "import");
    return $buttons;
 }
  
 // Load the TinyMCE plugin : editor_plugin.js (wp2.5)
 function add_videoposts_tinymce_plugin($plugin_array) {
    $plugin_array['recorder'] = home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/editor_plugin.js';
+   $plugin_array['import'] = home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/editor_plugin_i.js';
    return $plugin_array;
 }
  
@@ -77,7 +79,8 @@ if (!class_exists("VWvideoPosts"))
 		$embedWidth = $options['embedWidth'];
 		$embedHeight = $options['embedHeight'];
 		$autoplay = $options['autoplay'];
-		
+		$streams_url = $options['videos_url'];
+		$videosPath = $options['directory'];
 		$state = 'block' ;
 		if (!$videowhisper) $state = 'none';
 		
@@ -86,10 +89,11 @@ if (!class_exists("VWvideoPosts"))
 		preg_match_all("/\[videowhisper stream=\"([a-zA-Z0-9_\-\s]*)\"\]/i",$content,$matches);
 		//var_dump($matches);
 		$result = $content;
-		//echo $content;
+		//echo $player;
 		
 		for( $i=0; $i<count($matches[0]);$i++)
 		{
+			//echo $player;
 			$home = home_url();
 			$streamname = $matches[1][$i];
 			switch($player)
@@ -106,6 +110,19 @@ EOD;
 <div id='jwplayer_$streamname' style='width: ${embedWidth}px; height: ${embedHeight}px'><script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'></script><script type='text/javascript'>var flashvars = { file: '$streamname', streamer: '$rtmp_server', autostart: '$autoplay',width: '${embedWidth}px', height: '${embedHeight}px', type: 'rtmp', image: '$image' }; swfobject.embedSWF('$home/wp-content/uploads/jw-player-plugin-for-wordpress/player/player.swf','jwplayer_$streamname','$embedWidth px','$embedHeight px','9','false', flashvars,  {allowfullscreen:'true',allowscriptaccess:'always'},   {id:'jwplayer',name:'jwplayer'}  );</script></div>$poweredby
 EOD;
 				break;
+				
+				case 'ffmpeg':
+				if (file_exists($output_file = $videosPath . $streamname  . "-ip.mp4"))
+				{
+					//echo $videosPath.$streams_url;
+				$play_url = $streams_url . $streamname  . "-ip.mp4";
+				$play_urlw = $streams_url . $streamname  . ".ogv";
+				$playercode = <<<EOD
+<video width='$embedWidth px' height='$embedHeight px'  autobuffer autoplay controls='controls'><source src='$play_url' type='video/mp4'><source src='$play_urlw' type='video/ogg'>You must have an HTML5 capable browser.</video>$poweredby
+EOD;
+				}
+				break;
+				
 			}
 			$result = str_replace($matches[0][$i],$playercode,$result);
 		}	
@@ -186,7 +203,8 @@ function init()
 				'layoutCode' => '',
 				'fillWindow' => 0,
 				'recordLimit' => 600,
-				'directory' => 'c:Program Files/Wowza Media Systems/Wowza Media Server 3.1.1/content',
+				'directory' => '/home/youraccount/public_html/streams/',
+				'videos_url' => 'http://yourserver.com/streams/',
 				'videowhisper' => 0
 				);
 				
@@ -202,6 +220,7 @@ function init()
 	function options() 
 	{
 		$mod = $_GET['mod'];
+		$model = $_GET['model'];
 		if ($mod == '') $mod = 'settings';
 		if($mod == 'settings')
 		{
@@ -228,6 +247,7 @@ function init()
 				if (isset($_POST['fillWindow'])) $options['fillWindow'] = $_POST['fillWindow'];
 				if (isset($_POST['recordLimit'])) $options['recordLimit'] = $_POST['recordLimit'];
 				if (isset($_POST['directory'])) $options['directory'] = $_POST['directory'];
+				if (isset($_POST['videos_url'])) $options['videos_url'] = $_POST['videos_url'];
 				if (isset($_POST['videowhisper'])) $options['videowhisper'] = $_POST['videowhisper'];
 				update_option('VWvideoRecorderOptions', $options);
 		}
@@ -246,9 +266,15 @@ function init()
 <?php
 
 $detectedp[jwplayer] = 0;
-//$detectedp[videojs] = 0;
+
+$cmd ="/usr/local/bin/ffmpeg -codecs";
+exec($cmd, $output, $returnvalue); 
+if ($returnvalue == 127) $ffmpegdetected = 0;
+	else $ffmpegdetected = 1;
+
+
 if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $detectedp[jwplayer] = 1;
-//if (is_plugin_active('videojs-html5-video-player-for-wordpress/video-js.php')) $detectedp[videojs] = 1;
+
 
 ?>
 	<h5>Select Player</h5>
@@ -260,11 +286,13 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 	<option value='jwplayer' <?=$options['selectPlayer'] == 'jwplayer'?"selected":""?>>Jw Player</option> 
 	<?php
 	}
-	//if ($detectedp[videojs]) {
-	
-	//<option value='videojs' <?=$options['selectPlayer'] == 'videojs'?"selected":"">Video Js</option>
-	
- // }
+	if ($ffmpegdetected == 1)
+ {
+	?>
+	<option value='ffmpeg' <?=$options['selectPlayer'] == 'ffmpeg'?"selected":""?>>HTML5</option> 
+	<?php
+	}
+
   ?>
 	</select>
 	<p> Jw Player: 
@@ -278,13 +306,32 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 	?></p>
 	
 	<?php
-	/*<p> Video Js: 
-	if ($detectedp[videojs]) {
-		echo "Detected";
-	}else{
-		echo"<a href='http://wordpress.org/extend/plugins/videojs-html5-video-player-for-wordpress/' target='_blank'> Not Detected </a>";
+
+	
+	echo "<p><h5> Conversion tools for HTML5 playback: </h5></p>";
+
+
+	echo "<table><tr><td> ffmpeg: </td>";
+	$cmd ="/usr/local/bin/ffmpeg -codecs";
+	exec($cmd, $output, $returnvalue); 
+	if ($returnvalue == 127)  echo "<td><font color='red'> &nbsp &nbsp &nbsp &nbsp  Not detected: $cmd</font></td></tr>"; else echo "<td><font color='green'> &nbsp &nbsp &nbsp &nbsp  Detected</font></td></tr>";
+
+	//detect codecs
+	if ($output) if (count($output)) 
+	foreach (array('h264','faac','speex', 'nellymoser') as $cod) 
+	{
+	$det=0; $outd="";
+	echo "<tr><td> $cod codec: </td>";
+	foreach ($output as $outp) if (strstr($outp,$cod)) { $det=1; $outd=$outp; };
+	if ($det) echo "<td><font color='green'> &nbsp &nbsp &nbsp &nbsp  Detected ($outd)</font></td></tr>"; else echo "<td><font color='red'> &nbsp &nbsp &nbsp &nbsp  Missing: please configure and install ffmpeg with lib$cod</font></td></tr>";
 	}
-	</p>*/
+
+	echo "<tr><td> ffmpeg2theora: </td> ";
+	$cmd ="/usr/local/bin/ffmpeg2theora";
+	echo exec($cmd, $output, $returnvalue); 
+	if ($returnvalue == 127)  echo "<td><font color='red'> &nbsp &nbsp &nbsp &nbsp  Not detected: $cmd</font></td></tr>"; else echo "<td><font color='green'> &nbsp &nbsp  &nbsp &nbsp Detected</font></td></tr>";
+	echo "</table>";
+	
 	?>
 
 <h5>Embed Mode</h5>
@@ -358,11 +405,18 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 
 <h5>Record Limit</h5>
 <input name="recordLimit" type="text" id="recordLimit" size="5" maxlength="5" value="<?=$options['recordLimit']?>"/>
-
 <h5>Videos directory</h5>
 <input name="directory" type="text" id="directory" size="80" maxlength="256" value="<?=$options['directory']?>"/>
 <BR>
+
 Example: /home/youraccount/public_html/streams/ 
+<BR>
+(Ending in / .)
+
+<h5>Videos url</h5>
+<input name="videos_url" type="text" id="videos_url" size="80" maxlength="256" value="<?=$options['videos_url']?>"/>
+<BR>
+Example: http://yourserver.com/streams/ 
 <BR>
 (Ending in / .)
 
@@ -381,7 +435,63 @@ Example: /home/youraccount/public_html/streams/
 	}
 		if($mod == 'recordings')
 		{ 
+			if($model == "delete")
+			{
+				// sterg alea si afisez un msg
+				$recs = $_POST['recs'];
+				
+				//$options = get_option('VWvideoRecorderOptions');
+				$delete_from = $options['directory'];
+
+				$loggedin=0;
+				global $current_user;
+				get_currentuserinfo();
+				if ($current_user->user_nicename) $username=urlencode($current_user->user_nicename);
+						
+					if ($username) $loggedin=1;
+					else 
+					{
+						echo "<BR>";
+						echo "<p aling='center'><H3>Only admin can access this page!</H3></p>";
+					}
+				if($loggedin == 1)
+				{
+					global $wpdb;
+					$table_name = $wpdb->prefix."vw_videorecordings";
+					
+					if($recs){
+						foreach ($recs as $rec)
+						{
+							$wpdb->query($sql = "DELETE FROM $table_name WHERE streamname = '$rec' ");
+							//echo $sql;
+						
+							if (file_exists($file = $delete_from . $rec  . ".flv"))	unlink($file);
+						
+							if (file_exists($file = $delete_from . $rec  . ".key")) unlink($file);
+								
+							if (file_exists($file = $delete_from . $rec  . ".meta")) unlink($file);
+
+							if (file_exists($file = "recordings/" . $rec  . ".vwr")) unlink($file);
+							
+							if (file_exists($file = $delete_from . $rec  . "-ip.mp4")) unlink($file);
+							if (file_exists($file = $delete_from . $rec  . ".log")) unlink($file);
+							if (file_exists($file = $delete_from . $rec  . ".ogv")) unlink($file);
+							if (file_exists($file = $delete_from . $rec  . "-ogv.log")) unlink($file);
+							
+							if (file_exists($file = "snapshots/" . $rec  . ".jpg")) unlink($file);
+							
+						}
+						echo "<BR><BR>";
+						echo "The files were successfully deleted!";
+						
+						echo "This deletes only the video recordings. You will have to  manually edit the post to remove embed code and references. ";
+						echo "<BR><BR>";
+					}
+				}
+				//var_dump($recs);
+			}
 			?>
+			
 			<div class="wrap">
 			<div id="icon-options-general" class="icon32"><br></div>
 			<h2>Video Posts Recordings list</h2>
@@ -396,12 +506,51 @@ Example: /home/youraccount/public_html/streams/
 			global $wpdb;
 			$table_name = $wpdb->prefix."vw_videorecordings";
 			$items =  $wpdb->get_results("SELECT * FROM `$table_name` ORDER BY `id` DESC");
+			
+			?>
+			
+					
+			<script language="javascript">
+			function fncDelete()
+			{
+				if(confirm('Are you sure you want to delete videos?')==true)
+				{
+					//window.location = 'page1.cgi';
+					// $.cookie('deleted', deleted );
+					//form.inputdelete.value = 1;
+					form.submit();
+				}
+			}
+			</script>
+		
+			
+			<script language="JavaScript">
+			function checkUncheck(form, setTo) {
+				var c = document.getElementById(form).getElementsByTagName('input');
+				for (var i = 0; i < c.length; i++) {
+					if (c[i].type == 'checkbox') {
+						c[i].checked = setTo;
+					}
+				}
+			}
+
+			</script>
+			
+			<form id = "myForm" name = "form" action="<?php echo home_url(); ?>/wp-admin/options-general.php?page=videoposts.php&mod=recordings&model=delete" method="post">
+			<input type='button' onclick="checkUncheck('myForm', true);" value='Check All'>&nbsp;&nbsp;
+			<input type='button' onclick="checkUncheck('myForm', false);" value='Uncheck All'><br><br><?php
+			
 			echo "<table>";
 			if ($items)	foreach ($items as $item) 
 			{
 			echo "<tr>";
-				echo "<td>";
+				echo "<td valign='center'>";
+				?>
+				<input type="checkbox" id="recs[]" name="recs[]" value="<?php echo $item->streamname; ?>">
+				<?php
+				echo "</td><td>";
 				echo "<a href= ".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname." target='_blank'>";
+
 				if(file_exists('../'.$file = 'wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/'.$item->streamname.'.jpg')) 
 				{
 					echo "<img src=".home_url().'/'.$file.">";
@@ -416,8 +565,8 @@ Example: /home/youraccount/public_html/streams/
 				echo "<a href= ".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname.'&postid='.$item->postId." target='_blank'><B>".$item->streamname."</B></a>";
 				echo " <BR><BR> ";
 				echo "<a href=".home_url().'?p='.$item->postId." target='_blank'><B> View Post </B></a>";
-				echo " <BR> ";
-				echo "<a href=".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/recorded_videos.php?delete='. urlencode($item->streamname).'&postid='.$item->postId." target='_blank'><B> Delete this Recording </B></a>";
+				//echo " <BR> ";
+				//echo "<a href=".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/recorded_videos.php?delete='. urlencode($item->streamname).'&postid='.$item->postId." target='_blank'><B> Delete this Recording </B></a>";
 				echo " <BR> ";
 				echo date("D M j G:i:s T Y",$item->time);
 				echo " <BR> ";
@@ -426,6 +575,11 @@ Example: /home/youraccount/public_html/streams/
 			echo "</tr>";
 			}
 			echo "</table>";
+			?>
+			<INPUT onClick="JavaScript:fncDelete(this.form);"  type="button" value="Delete" id="delete" name="delete">
+			  </form>
+			<?php
+			
 		}
 	}
 }

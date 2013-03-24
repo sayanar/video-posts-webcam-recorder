@@ -9,7 +9,8 @@ $rtmp_server = $options['rtmp_server'];
 
 $vid = $_GET['vid'];
 $postid = $_GET['postid'];
-$vwplayer = $_GET['vwplayer'];
+$ffmpeg = $_GET['ffmpeg'];
+$vwplayer = $_GET['vwplayer'];$vwplayer = $_GET['vwplayer'];
 ?>
 <div align="center" style="width:320px;height:240px" class="info">
 <?
@@ -30,7 +31,26 @@ var flashvars = { file: "<?php echo urlencode($vid); ?>", streamer: "<?php echo 
 
 <?php
 }
-else
+else if($ffmpeg == 1)
+{
+	if (file_exists($output_file = $videosPath . $streamname  . "-ios.mp4"))
+	{
+		$play_url = $streams_url . $streamname  . "-ios.mp4";
+		$play_urlw = $streams_url . $streamname  . ".ogv";
+		?>
+		<video width="480" height="352"  autobuffer autoplay controls="controls">
+		 <source src="<?php echo $play_url?>" type='video/mp4'>
+		 <source src="<?php echo $play_urlw?>" type='video/ogg'>
+			<div class="fallback">
+				<p>You must have an HTML5 capable browser.</p>
+			</div>
+		</video>
+
+		<?php
+	
+	}	
+
+}else
 {
 $swfurl="streamplayer.swf?streamName=".urlencode($vid)."&serverRTMP=".urlencode($rtmp_server)."&templateURL=";
 

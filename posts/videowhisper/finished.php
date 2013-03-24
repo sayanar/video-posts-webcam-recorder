@@ -10,6 +10,8 @@ $embedmode = $options['embedMode'];
 $embedWidth = $options['embedWidth'];
 $embedHeight = $options['embedHeight'];
 $autoplay = $options['autoplay'];
+$streams_url = $options['videos_url'];
+$videosPath = $options['directory'];
 
 	$state = 'block' ;
 	if (!$videowhisper) $state = 'none';
@@ -48,6 +50,19 @@ EOD;
 <u>$streamname</u><div id='jwplayer1' style='width: ${embedWidth}px; height: ${embedHeight}px'><scr"+"ipt type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'></scr"+"ipt><scr"+"ipt type='text/javascript'>var flashvars = { file: '$streamname', streamer: '$rtmp_server', autostart: '$autoplay',width: '${embedWidth}px', height: '${embedHeight}px', type: 'rtmp', image: '$image' }; swfobject.embedSWF('$home/wp-content/uploads/jw-player-plugin-for-wordpress/player/player.swf','jwplayer1','$embedWidth px','$embedHeight px','9','false', flashvars,  {allowfullscreen:'true',allowscriptaccess:'always'},   {id:'jwplayer',name:'jwplayer'}  );</scr"+"ipt></div>$poweredby
 EOD;
 		break;
+		
+		case 'ffmpeg':
+		//echo "finished".$videosPath . $streamname  . "-ip.mp4";
+		if (file_exists($output_file = $videosPath . $streamname  . "-ip.mp4"))
+		{
+			$play_url = $streams_url . $streamname  . "-ip.mp4";
+			$play_urlw = $streams_url . $streamname  . ".ogv";
+			$playercode = <<<EOD
+<video width='$embedWidth px' height='$embedHeight px'  autobuffer autoplay controls='controls'><source src='$play_url' type='video/mp4'><source src='$play_urlw' type='video/ogg'>You must have an HTML5 capable browser.</div></video>$poweredby
+EOD;
+		}
+		break;
+		
 	}
 } else
 {
