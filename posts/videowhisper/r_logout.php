@@ -1,8 +1,13 @@
 <?
 include("header.php");
+  
+  include_once("incsan.php");
+  $message = $_GET['message'];
+  sanV($message);
+
 ?>
 <p>
-  <?=$_GET['message']?>
+  <?=$message?>
 
 
 </p>
