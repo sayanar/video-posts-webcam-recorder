@@ -259,9 +259,8 @@ function init()
 <h4>RTMP Address</h4>
 <p>To run this, make sure your hosting environment meets all <a href="http://www.videowhisper.com/?p=Requirements" target="_blank">requirements</a>.  If you don't have a videowhisper rtmp address yet (from a managed rtmp host), go to <a href="http://www.videowhisper.com/?p=RTMP+Applications" target="_blank">RTMP Application   Setup</a> for  installation details.</p>
 <input name="rtmp_server" type="text" id="rtmp_server" size="80" maxlength="256" value="<?=$options['rtmp_server']?>"/>
-
+<p>For video recordings we recommend <a href="http://www.videowhisper.com/?p=Wowza+Media+Server+Hosting">Wowza RTMP hosting</a>. To enable HTML5 playback, web server with ffmpeg support must be on same physical server as RTMP so scripts have access to video files saved by streaming server.</p>
 <?php
-
 $detectedp[jwplayer] = 0;
 
 $cmd ="/usr/local/bin/ffmpeg -codecs";
@@ -333,7 +332,8 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 
 <h4>FFMPEG Conversion</h4>
 <p>If ffmpeg is available use these to update parameters as needed for conversion.</p>
-<input name="ffmpegcall" type="text" id="ffmpegcall" size="128" maxlength="256" value="<?=$options['ffmpegcall']?>"/> $output_file -i $input_file
+<input name="ffmpegcall" type="text" id="ffmpegcall" size="100" maxlength="256" value="<?=$options['ffmpegcall']?>"/> $output_file -i $input_file
+<BR>Ex: /usr/local/bin/ffmpeg -y -s 480x360 -r 15 -vb 512k -vcodec libx264 -coder 0 -bf 0 -level 3.1 -g 30 -maxrate 768k -acodec libfaac -ac 2 -ar 22050 -ab 96k -x264opts vbv-maxrate=364:qpmin=4:ref=4
 
 <h4>Videos directory</h4>
 <input name="directory" type="text" id="directory" size="80" maxlength="256" value="<?=$options['directory']?>"/>
@@ -359,11 +359,11 @@ Example: http://yourserver.com/streams/
 
 <h4>Embed Width</h4>
 <input name="embedWidth" type="text" id="embedWidth" size="5" maxlength="5" value="<?=$options['embedWidth']?>"/>
-<BR>Specify px/%.
+<BR>Specify px or %.
 
 <h4>Embed Height</h4>
 <input name="embedHeight" type="text" id="embedHeight" size="5" maxlength="5" value="<?=$options['embedHeight']?>"/>
-<BR>Specify px/%.
+<BR>Specify px or %.
 
 <h4>Autoplay</h4>
 <select name="autoplay" id="autoplay">
