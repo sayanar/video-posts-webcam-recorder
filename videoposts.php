@@ -3,7 +3,7 @@
 Plugin Name: Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
 Description: Video Posts Webcam Recorder
-Version: 1.55.4
+Version: 1.55.5
 Author: VideoWhisper.com
 Author URI: http://www.videowhisper.com/
 Contributors: videowhisper, VideoWhisper.com
@@ -68,6 +68,8 @@ if (!class_exists("VWvideoPosts"))
 	$sql="UPDATE $table_name SET postId = '$post_id' WHERE id = '$recCookie' AND postId = '0'";
 	$wpdb->query($sql);
 	}
+	
+	
 	function post_shortcode($content)
 	{
 		$options = get_option('VWvideoRecorderOptions');
@@ -76,8 +78,10 @@ if (!class_exists("VWvideoPosts"))
 		$videowhisper = $options['videowhisper'];
 		$player = $options['selectPlayer'];
 		$embedmode = $options['embedMode'];
+		
 		$embedWidth = $options['embedWidth'];
 		$embedHeight = $options['embedHeight'];
+		
 		$autoplay = $options['autoplay'];
 		$streams_url = $options['videos_url'];
 		$videosPath = $options['directory'];
@@ -100,27 +104,29 @@ if (!class_exists("VWvideoPosts"))
 			{
 				case 'vwplayer':
 				$playercode = <<<EOD
-<div id='vwplayer' style='width:$embedWidth px; height:$embedHeight px'><object height="100%" width="100%"><param name="movie" value=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\"><param name="scale" value="noscale"><param name="salign" value="lt"><param name="base" value="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"><param name="allowFullScreen" value="true"><param name="allowscriptaccess" value="always"><embed base="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"  scale="noscale" salign="lt" src=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" height="$embedHeight px" width="$embedWidth px"></object></div>$poweredby
+<div id='vwplayer' style='width:$embedWidth; height:$embedHeight'><object height="100%" width="100%"><param name="movie" value=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\"><param name="scale" value="noscale"><param name="salign" value="lt"><param name="base" value="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"><param name="allowFullScreen" value="true"><param name="allowscriptaccess" value="always"><embed base="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"  scale="noscale" salign="lt" src=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" height="$embedHeight" width="$embedWidth"></object></div>$poweredby
 EOD;
 	
 				break;
 				case 'jwplayer':
 				$image = file_exists("wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/$streamname.jpg")?$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/$streamname.jpg":$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/no_video.png";
 				$playercode = <<<EOD
-<div id='jwplayer_$streamname' style='width: ${embedWidth}px; height: ${embedHeight}px'><script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'></script><script type='text/javascript'>var flashvars = { file: '$streamname', streamer: '$rtmp_server', autostart: '$autoplay',width: '${embedWidth}px', height: '${embedHeight}px', type: 'rtmp', image: '$image' }; swfobject.embedSWF('$home/wp-content/uploads/jw-player-plugin-for-wordpress/player/player.swf','jwplayer_$streamname','$embedWidth px','$embedHeight px','9','false', flashvars,  {allowfullscreen:'true',allowscriptaccess:'always'},   {id:'jwplayer',name:'jwplayer'}  );</script></div>$poweredby
+<div id='jwplayer_$streamname' style='width: ${embedWidth}; height: ${embedHeight}'><script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'></script><script type='text/javascript'>var flashvars = { file: '$streamname', streamer: '$rtmp_server', autostart: '$autoplay',width: '${embedWidth}', height: '${embedHeight}', type: 'rtmp', image: '$image' }; swfobject.embedSWF('$home/wp-content/uploads/jw-player-plugin-for-wordpress/player/player.swf','jwplayer_$streamname','$embedWidth','$embedHeight','9','false', flashvars,  {allowfullscreen:'true',allowscriptaccess:'always'},   {id:'jwplayer',name:'jwplayer'}  );</script></div>$poweredby
 EOD;
 				break;
 				
 				case 'ffmpeg':
 				if (file_exists($output_file = $videosPath . $streamname  . "-ip.mp4"))
 				{
+				$image = file_exists("wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/$streamname.jpg")?$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/$streamname.jpg":$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/no_video.png";
+				
 					//echo $videosPath.$streams_url;
 				$play_url = $streams_url . $streamname  . "-ip.mp4";
 				$play_urlw = $streams_url . $streamname  . ".ogv";
 				$playercode = <<<EOD
-<video width='$embedWidth px' height='$embedHeight px'  autobuffer autoplay controls='controls'><source src='$play_url' type='video/mp4'><source src='$play_urlw' type='video/ogg'>You must have an HTML5 capable browser.</video>$poweredby
+<video width='$embedWidth' height='$embedHeight' autobuffer controls='controls' poster='$image' ><source src='$play_url' type='video/mp4'><source src='$play_urlw' type='video/ogg'>You must have an HTML5 capable browser.</video>$poweredby
 EOD;
-				}
+				} else $playercode = "Video not found: $output_file";
 				break;
 				
 			}
@@ -184,15 +190,13 @@ function init()
 				
 				$adminOptions = array(
 				'embedMode' => 1,
-				'embedWidth' => 320,
-				'embedHeight' => 240,
 				'autoplay' => true,
 				'rtmp_server' => 'rtmp://localhost/videowhisper',
 				'selectPlayer' => 'vwplayer',
 				'camWidth' => 320,
 				'camHeigth' => 240,
-				'embedWidth' => 320,
-				'embedHeight' => 240,
+				'embedWidth' => '480px',
+				'embedHeight' => '360px',
 				'camFps' => 15,
 				'micRate' => 22,
 				'camBandwidth' => 49158,
@@ -205,6 +209,8 @@ function init()
 				'recordLimit' => 600,
 				'directory' => '/home/youraccount/public_html/streams/',
 				'videos_url' => 'http://yourserver.com/streams/',
+				'ffmpegcall' => '/usr/local/bin/ffmpeg -y -s 480x360 -r 15 -vb 512k -vcodec libx264 -coder 0 -bf 0 -level 3.1 -g 30 -maxrate 768k -acodec libfaac -ac 2 -ar 22050 -ab 96k -x264opts vbv-maxrate=364:qpmin=4:ref=4',
+				
 				'videowhisper' => 0
 				);
 				
@@ -226,31 +232,17 @@ function init()
 		{
 		$options = VWvideoPosts::getAdminOptions();
 
-		if (isset($_POST['updateSettings'])) 
-		{
-				if (isset($_POST['rtmp_server'])) $options['rtmp_server'] = $_POST['rtmp_server'];
-				if (isset($_POST['embedMode'])) $options['embedMode'] = $_POST['embedMode'];
-				if (isset($_POST['embedWidth'])) $options['embedWidth'] = $_POST['embedWidth'];
-				if (isset($_POST['embedHeight'])) $options['embedHeight'] = $_POST['embedHeight'];
-				if (isset($_POST['autoplay'])) $options['autoplay'] = $_POST['autoplay'];
-				if (isset($_POST['selectPlayer'])) $options['selectPlayer'] = $_POST['selectPlayer'];
-				if (isset($_POST['camWidth'])) $options['camWidth'] = $_POST['camWidth'];
-				if (isset($_POST['camHeigth'])) $options['camHeigth'] = $_POST['camHeigth'];
-				if (isset($_POST['camFps'])) $options['camFps'] = $_POST['camFps'];
-				if (isset($_POST['micRate'])) $options['micRate'] = $_POST['micRate'];
-				if (isset($_POST['camBandwidth'])) $options['camBandwidth'] = $_POST['camBandwidth'];
-				if (isset($_POST['camMaxBandwidth'])) $options['camMaxBandwidth'] = $_POST['camMaxBandwidth'];
-				if (isset($_POST['showCamSettings'])) $options['showCamSettings'] = $_POST['showCamSettings'];
-				if (isset($_POST['advancedCamSettings'])) $options['advancedCamSettings'] = $_POST['advancedCamSettings'];
-				if (isset($_POST['disablePreview'])) $options['disablePreview'] = $_POST['disablePreview'];
-				if (isset($_POST['layoutCode'])) $options['layoutCode'] = $_POST['layoutCode'];
-				if (isset($_POST['fillWindow'])) $options['fillWindow'] = $_POST['fillWindow'];
-				if (isset($_POST['recordLimit'])) $options['recordLimit'] = $_POST['recordLimit'];
-				if (isset($_POST['directory'])) $options['directory'] = $_POST['directory'];
-				if (isset($_POST['videos_url'])) $options['videos_url'] = $_POST['videos_url'];
-				if (isset($_POST['videowhisper'])) $options['videowhisper'] = $_POST['videowhisper'];
+	
+			if (isset($_POST))
+			{
+
+				foreach ($options as $key => $value)
+					if (isset($_POST[$key])) $options[$key] = $_POST[$key];
+				
 				update_option('VWvideoRecorderOptions', $options);
-		}
+			}
+
+
 	  ?>
 <div class="wrap">
 <div id="icon-options-general" class="icon32"><br></div>
@@ -263,6 +255,11 @@ function init()
 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
 
 <h3>General Settings</h3>
+
+<h4>RTMP Address</h4>
+<p>To run this, make sure your hosting environment meets all <a href="http://www.videowhisper.com/?p=Requirements" target="_blank">requirements</a>.  If you don't have a videowhisper rtmp address yet (from a managed rtmp host), go to <a href="http://www.videowhisper.com/?p=RTMP+Applications" target="_blank">RTMP Application   Setup</a> for  installation details.</p>
+<input name="rtmp_server" type="text" id="rtmp_server" size="80" maxlength="256" value="<?=$options['rtmp_server']?>"/>
+
 <?php
 
 $detectedp[jwplayer] = 0;
@@ -277,7 +274,7 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 
 
 ?>
-	<h5>Select Player</h5>
+	<h4>Select Player</h4>
 	<select name='selectPlayer' id='selectPlayer'> 
 	<option value='vwplayer' <?=$options['selectPlayer'] == 'vwplayer'?"":"selected"?>>Video Whisper</option>
 	<?php
@@ -308,7 +305,7 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 	<?php
 
 	
-	echo "<p><h5> Conversion tools for HTML5 playback: </h5></p>";
+	echo "<p><h4> Conversion tools for HTML5 playback: </h4></p>";
 
 
 	echo "<table><tr><td> ffmpeg: </td>";
@@ -334,78 +331,11 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 	
 	?>
 
-<h5>Embed Mode</h5>
-<select name="embedMode" id="embedMode">
-  <option value="0" <?=$options['embedMode']?"":"selected"?>>Direct mode</option>
-  <option value="1" <?=$options['embedMode']?"selected":""?>>Shortcode mode</option>
-</select>
+<h4>FFMPEG Conversion</h4>
+<p>If ffmpeg is available use these to update parameters as needed for conversion.</p>
+<input name="ffmpegcall" type="text" id="ffmpegcall" size="128" maxlength="256" value="<?=$options['ffmpegcall']?>"/> $output_file -i $input_file
 
-<h5>Embed Width</h5>
-<input name="embedWidth" type="text" id="embedWidth" size="5" maxlength="5" value="<?=$options['embedWidth']?>"/>
-
-<h5>Embed Height</h5>
-<input name="embedHeight" type="text" id="embedHeight" size="5" maxlength="5" value="<?=$options['embedHeight']?>"/>
-
-<h5>Autoplay</h5>
-<select name="autoplay" id="autoplay">
-  <option value="false" <?=$options['autoplay']?"":"selected"?>>Off</option>
-  <option value="true" <?=$options['autoplay']?"selected":""?>>On</option>
-</select>
-
-<h5>RTMP Address</h5>
-<p>To run this, make sure your hosting environment meets all <a href="http://www.videowhisper.com/?p=Requirements" target="_blank">requirements</a>.  If you don't have a videowhisper rtmp address yet (from a managed rtmp host), go to <a href="http://www.videowhisper.com/?p=RTMP+Applications" target="_blank">RTMP Application   Setup</a> for  installation details.</p>
-<input name="rtmp_server" type="text" id="rtmp_server" size="80" maxlength="256" value="<?=$options['rtmp_server']?>"/>
-
-<h5>Cam Width</h5>
-<input name="camWidth" type="text" id="camWidth" size="5" maxlength="5" value="<?=$options['camWidth']?>"/>
-
-<h5>Cam Heigth</h5>
-<input name="camHeigth" type="text" id="camHeigth" size="5" maxlength="5" value="<?=$options['camHeigth']?>"/>
-
-<h5>Cam Fps</h5>
-<input name="camFps" type="text" id="camFps" size="5" maxlength="5" value="<?=$options['camFps']?>"/>
-
-<h5>Mic Rate</h5>
-<input name="micRate" type="text" id="micRate" size="5" maxlength="5" value="<?=$options['micRate']?>"/>
-
-<h5>Cam Bandwidth</h5>
-<input name="camBandwidth" type="text" id="camBandwidth" size="8" maxlength="8" value="<?=$options['camBandwidth']?>"/>
-
-<h5>Cam Max Bandwidth</h5>
-<input name="camMaxBandwidth" type="text" id="camMaxBandwidth" size="8" maxlength="8" value="<?=$options['camMaxBandwidth']?>"/>
-
-<h5>Show Cam Settings</h5>
-<select name="showCamSettings" id="showCamSettings">
-  <option value="0" <?=$options['showCamSettings']?"":"selected"?>>No</option>
-  <option value="1" <?=$options['showCamSettings']?"selected":""?>>Yes</option>
-</select>
-
-<h5>Advanced Cam Settings</h5>
-<select name="advancedCamSettings" id="advancedCamSettings">
-  <option value="0" <?=$options['advancedCamSettings']?"":"selected"?>>No</option>
-  <option value="1" <?=$options['advancedCamSettings']?"selected":""?>>Yes</option>
-</select>
-
-<h5>Disable Preview</h5>
-<select name="disablePreview" id="disablePreview">
-  <option value="0" <?=$options['disablePreview']?"":"selected"?>>No</option>
-  <option value="1" <?=$options['disablePreview']?"selected":""?>>Yes</option>
-</select>
-
-<h5>Layout Code</h5>
-<textarea name="layoutCode" type="textarea" cols="50" rows="3" id="layoutCode">
-<?echo $options['layoutCode'];?>
-</textarea>
-
-<h5>Fill Window</h5>
-<select name="fillWindow" id="fillWindow">
-  <option value="0" <?=$options['fillWindow']?"":"selected"?>>No</option>
-  <option value="1" <?=$options['fillWindow']?"selected":""?>>Yes</option>
-</select>
-
-<h5>Record Limit</h5>
-<input name="recordLimit" type="text" id="recordLimit" size="5" maxlength="5" value="<?=$options['recordLimit']?>"/>
-<h5>Videos directory</h5>
+<h4>Videos directory</h4>
 <input name="directory" type="text" id="directory" size="80" maxlength="256" value="<?=$options['directory']?>"/>
 <BR>
 
@@ -413,14 +343,86 @@ Example: /home/youraccount/public_html/streams/
 <BR>
 (Ending in / .)
 
-<h5>Videos url</h5>
+<h4>Videos url</h4>
 <input name="videos_url" type="text" id="videos_url" size="80" maxlength="256" value="<?=$options['videos_url']?>"/>
 <BR>
 Example: http://yourserver.com/streams/ 
 <BR>
 (Ending in / .)
 
-<h5>Show VideoWhisper Powered by</h5>
+
+<h4>Embed Mode</h4>
+<select name="embedMode" id="embedMode">
+  <option value="0" <?=$options['embedMode']?"":"selected"?>>Direct mode</option>
+  <option value="1" <?=$options['embedMode']?"selected":""?>>Shortcode mode</option>
+</select>
+
+<h4>Embed Width</h4>
+<input name="embedWidth" type="text" id="embedWidth" size="5" maxlength="5" value="<?=$options['embedWidth']?>"/>
+<BR>Specify px/%.
+
+<h4>Embed Height</h4>
+<input name="embedHeight" type="text" id="embedHeight" size="5" maxlength="5" value="<?=$options['embedHeight']?>"/>
+<BR>Specify px/%.
+
+<h4>Autoplay</h4>
+<select name="autoplay" id="autoplay">
+  <option value="false" <?=$options['autoplay']?"":"selected"?>>Off</option>
+  <option value="true" <?=$options['autoplay']?"selected":""?>>On</option>
+</select>
+
+
+<h4>Cam Width</h4>
+<input name="camWidth" type="text" id="camWidth" size="5" maxlength="5" value="<?=$options['camWidth']?>"/>
+
+<h4>Cam Heigth</h4>
+<input name="camHeigth" type="text" id="camHeigth" size="5" maxlength="5" value="<?=$options['camHeigth']?>"/>
+
+<h4>Cam Fps</h4>
+<input name="camFps" type="text" id="camFps" size="5" maxlength="5" value="<?=$options['camFps']?>"/>
+
+<h4>Mic Rate</h4>
+<input name="micRate" type="text" id="micRate" size="5" maxlength="5" value="<?=$options['micRate']?>"/>
+
+<h4>Cam Bandwidth</h4>
+<input name="camBandwidth" type="text" id="camBandwidth" size="8" maxlength="8" value="<?=$options['camBandwidth']?>"/>
+
+<h4>Cam Max Bandwidth</h4>
+<input name="camMaxBandwidth" type="text" id="camMaxBandwidth" size="8" maxlength="8" value="<?=$options['camMaxBandwidth']?>"/>
+
+<h4>Show Cam Settings</h4>
+<select name="showCamSettings" id="showCamSettings">
+  <option value="0" <?=$options['showCamSettings']?"":"selected"?>>No</option>
+  <option value="1" <?=$options['showCamSettings']?"selected":""?>>Yes</option>
+</select>
+
+<h4>Advanced Cam Settings</h4>
+<select name="advancedCamSettings" id="advancedCamSettings">
+  <option value="0" <?=$options['advancedCamSettings']?"":"selected"?>>No</option>
+  <option value="1" <?=$options['advancedCamSettings']?"selected":""?>>Yes</option>
+</select>
+
+<h4>Disable Preview</h4>
+<select name="disablePreview" id="disablePreview">
+  <option value="0" <?=$options['disablePreview']?"":"selected"?>>No</option>
+  <option value="1" <?=$options['disablePreview']?"selected":""?>>Yes</option>
+</select>
+
+<h4>Layout Code</h4>
+<textarea name="layoutCode" type="textarea" cols="50" rows="3" id="layoutCode">
+<?echo $options['layoutCode'];?>
+</textarea>
+
+<h4>Fill Window</h4>
+<select name="fillWindow" id="fillWindow">
+  <option value="0" <?=$options['fillWindow']?"":"selected"?>>No</option>
+  <option value="1" <?=$options['fillWindow']?"selected":""?>>Yes</option>
+</select>
+
+<h4>Record Limit</h4>
+<input name="recordLimit" type="text" id="recordLimit" size="5" maxlength="5" value="<?=$options['recordLimit']?>"/>
+
+<h4>Show VideoWhisper Powered by</h4>
 <select name="videowhisper" id="videowhisper">
   <option value="0" <?=$options['videowhisper']?"":"selected"?>>No</option>
   <option value="1" <?=$options['videowhisper']?"selected":""?>>Yes</option>
@@ -549,22 +551,25 @@ Example: http://yourserver.com/streams/
 				<input type="checkbox" id="recs[]" name="recs[]" value="<?php echo $item->streamname; ?>">
 				<?php
 				echo "</td><td>";
-				echo "<a href= ".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname." target='_blank'>";
+				echo "<a href='".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname."' target='_blank'>";
 
 				if(file_exists('../'.$file = 'wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/'.$item->streamname.'.jpg')) 
 				{
-					echo "<img src=".home_url().'/'.$file.">";
+					echo "<img src='".home_url().'/'.$file."'>";
 				}
 				else
 				{
-					echo "<img src=".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/no_video.png'.">";
+					echo "<img src='".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/no_video.png'."'>";
 				}
 				echo "</a>";
 				echo "</td>";
 				echo "<td>";
-				echo "<a href= ".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname.'&postid='.$item->postId." target='_blank'><B>".$item->streamname."</B></a>";
-				echo " <BR><BR> ";
-				echo "<a href=".home_url().'?p='.$item->postId." target='_blank'><B> View Post </B></a>";
+				echo "<a href= '".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplay.php?vid='.$item->streamname.'&postid='.$item->postId."' target='_blank'><B>".$item->streamname."</B></a>";
+				echo "<BR>";
+				echo "<a href='".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/recorded.php?stream='.$item->streamname."&mod=regenerate' target='_blank'>Regenerate HTML5 Conversion</a>";
+				echo "<BR>";
+				echo "<a href='".home_url().'?p='.$item->postId."' target='_blank'><B> View Post </B></a>";
+				
 				//echo " <BR> ";
 				//echo "<a href=".home_url().'/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/recorded_videos.php?delete='. urlencode($item->streamname).'&postid='.$item->postId." target='_blank'><B> Delete this Recording </B></a>";
 				echo " <BR> ";
