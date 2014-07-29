@@ -21,7 +21,7 @@ Special requirements: This plugin has requirements beyond regular WordPress host
 
 Recording can be done with the insert tool when editing posts or with the "videowhisper_recorder" shortcode that displays the interface to record video (uses permissions from VideoShareVOD if enabled).
 
-Find more details about the Video Recorder application and WordPress integrations on [Video Recorder Posts Comments](http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments/  "Video Recorder Posts Comments") home page.
+Find more details about the Video Recorder application and WordPress integrations on [Video Recorder Posts Comments](http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments  "Video Recorder Posts Comments") home page.
 
 == Installation ==
 * See latest version instructions on plugin homepage: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
