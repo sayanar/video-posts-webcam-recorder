@@ -7,7 +7,7 @@ $options = get_option('VWvideoRecorderOptions');
 
 $rtmp_server = $options['rtmp_server'];
 $camWidth = $options['camWidth'];
-$camHeigth = $options['camHeigth'];
+$camHeight = $options['camHeigth'];
 $camFps = $options['camFps'];
 $micRate = $options['micRate'];
 $camBandwidth = $options['camBandwidth'];

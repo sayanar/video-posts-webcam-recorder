@@ -2,8 +2,8 @@
 /*
 Plugin Name: Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
-Description: Video Posts Webcam Recorder
-Version: 1.85.1
+Description: Video Posts Webcam Recorder allows WordPress users to record and authors to directly insert videos in their posts. Integrates with VideoShareVOD plugin for advanced video management, multiple players and settings. 
+Version: 1.85.2
 Author: VideoWhisper.com
 Author URI: http://www.videowhisper.com/
 Contributors: videowhisper, VideoWhisper.com
@@ -361,7 +361,8 @@ if (is_plugin_active('video-share-vod/video-share-vod.php')) $detectedp[videosha
 	    echo "Not Detected.";
 	}
 	?>
-<br>Video Share VOD is a free open source solution to manage videos and  setup video sharing / video on demand (VOD) features on WordPress. Includes multiple options and players. For more details see <a href='http://videosharevod.com/' target='_blank'>VideoShareVOD Home Site</a> and <a href='http://wordpress.org/plugins/video-share-vod/' target='_blank'>VideoShareVOD on WordPress</a>.</p>
+<br>Video Share VOD is a free open source solution to manage videos and  setup video sharing / video on demand (VOD) features on WordPress. Includes multiple options and players.
+<br>For more details see <a href='http://videosharevod.com/' target='_blank'>VideoShareVOD Home Site</a> and <a href='http://wordpress.org/plugins/video-share-vod/' target='_blank'>VideoShareVOD on WordPress</a>.</p>
 	<p>JwPlayer: 
 		<?php
  	if ($detectedp[jwplayer]) {
@@ -449,10 +450,10 @@ Example: http://yourserver.com/streams/
 
 
 <h4>Cam Width</h4>
-<input name="camWidth" type="text" id="camWidth" size="5" maxlength="5" value="<?=$options['camWidth']?>"/>
+<input name="camWidth" type="text" id="camWidth" size="5" maxlength="5" value="<?=$options['camWidth']?>"/>px
 
 <h4>Cam Heigth</h4>
-<input name="camHeigth" type="text" id="camHeigth" size="5" maxlength="5" value="<?=$options['camHeigth']?>"/>
+<input name="camHeigth" type="text" id="camHeigth" size="5" maxlength="5" value="<?=$options['camHeigth']?>"/>px
 
 <h4>Cam Fps</h4>
 <input name="camFps" type="text" id="camFps" size="5" maxlength="5" value="<?=$options['camFps']?>"/>
@@ -496,7 +497,8 @@ Example: http://yourserver.com/streams/
 </select>
 
 <h4>Record Limit</h4>
-<input name="recordLimit" type="text" id="recordLimit" size="5" maxlength="5" value="<?=$options['recordLimit']?>"/>
+<input name="recordLimit" type="text" id="recordLimit" size="5" maxlength="5" value="<?=$options['recordLimit']?>"/>s
+<br>Maximum recording duration in seconds.
 
 <h4>Show VideoWhisper Powered by</h4>
 <select name="videowhisper" id="videowhisper">
