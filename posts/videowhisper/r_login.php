@@ -36,7 +36,6 @@ $msg="";
 $recordingId="";
 
 $layoutCode=<<<layoutEND
-id=0&label=Video&x=346&y=10&width=326&height=298; id=1&label=Camcorder&x=10&y=10&width=326&height=298
 layoutEND;
 
-?>server=<?=$rtmp_server?>&serverAMF=<?=$rtmp_amf?>&username=<?=$username?>&recordingId=<?=$recordingId?>&msg=<?=$msg?>&loggedin=<?=$loggedin?>&camWidth=<?=$camWidth?>&camHeight=<?=$camHeight?>&camFPS=<?=$camFPS?>&camBandwidth=<?=$camBandwidth?>&showCamSettings=<?=$showCamSettings?>&camMaxBandwidth=<?=$camMaxBandwidth?>&micRate=<?=$micRate?>&advancedCamSettings=<?=$advancedCamSettings?>&recordLimit=<?=$recordLimit?>&bufferLive=900&bufferFull=900&bufferLivePlayback=0.2&bufferFullPlayback=10&layoutCode=<?=urlencode($layoutCode)?>&fillWindow=<?=$fillWindow?>&disablePreview=<?=$disablePreview?>&loadstatus=1
+?>firstparam=fix&server=<?=$rtmp_server?>&serverAMF=<?=$rtmp_amf?>&username=<?=$username?>&recordingId=<?=$recordingId?>&msg=<?=$msg?>&loggedin=<?=$loggedin?>&camWidth=<?=$camWidth?>&camHeight=<?=$camHeight?>&camFPS=<?=$camFPS?>&camBandwidth=<?=$camBandwidth?>&showCamSettings=<?=$showCamSettings?>&camMaxBandwidth=<?=$camMaxBandwidth?>&micRate=<?=$micRate?>&advancedCamSettings=<?=$advancedCamSettings?>&recordLimit=<?=$recordLimit?>&bufferLive=900&bufferFull=900&bufferLivePlayback=0.2&bufferFullPlayback=10&layoutCode=<?=urlencode($layoutCode)?>&fillWindow=<?=$fillWindow?>&disablePreview=<?=$disablePreview?>&loadstatus=1

@@ -1,5 +1,4 @@
-<?
-
+<?php
 include_once("../../../../../wp-config.php");
 $options = get_option('VWvideoRecorderOptions');
 
@@ -20,7 +19,9 @@ $videosPath = $options['directory'];
 	
 	$postId = 0;
 
-	$streamname = $_GET['stream'];
+	$streamname = sanitize_file_name($_GET['stream']);
+	
+
 
 	global $current_user;
 	$current_user = wp_get_current_user();
@@ -36,8 +37,18 @@ $videosPath = $options['directory'];
 	
 	$home = home_url();
 	
-	switch($player)
+	switch ($player)
 	{
+		case 'videosharevod';
+
+	global $wpdb;
+	$postID = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . sanitize_file_name($streamname) . "' and post_type='video' LIMIT 0,1" );
+
+	$playercode = "[videowhisper_player video=\"$postID\"]";
+	$playercode = addslashes($playercode);
+
+		break;
+		
 		case 'vwplayer':
 		$playercode = <<<EOD
 <u>$streamname</u><div  style='width:${embedWidth}px; height:${embedHeight}px'><object height=\"100%\" width=\"100%\"><param name=\"movie\" value=\" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\"><param name=\"scale\" value=\"noscale\"><param name=\"salign\" value=\"lt\"><param name=\"base\" value=\"$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/\"><param name=\"allowFullScreen\" value=\"true\"><param name=\"allowscriptaccess\" value=\"always\"><embed base=\"$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/\"  scale=\"noscale\" salign=\"lt\" src=\" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" height=\"${embedHeight}px\" width=\"${embedWidth}px\"></object></div>$poweredby
@@ -72,13 +83,16 @@ EOD;
 ?>
 <script type="text/javascript" src="../../../../../wp-includes/js/tinymce/tiny_mce_popup.js"></script>
 <script> 
+if (tinyMCEPopup) if (tinyMCEPopup.onInit)
+{
 var RecordDialog = {
 	init : function(ed) {
 	    tinyMCEPopup.execCommand('mceInsertContent', false, "<?php echo $playercode;?>");
 		tinyMCEPopup.close();
 	}
 };
-
 tinyMCEPopup.onInit.add(RecordDialog.init, RecordDialog);
-  </script>
+}
+else document.location = '/';
+</script>
   

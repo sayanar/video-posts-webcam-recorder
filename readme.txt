@@ -5,9 +5,9 @@ Author URI: http://www.videowhisper.com
 Plugin Name: VideoWhisper Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder
 Donate link: http://www.videowhisper.com/?p=Invest
-Tags: video, flash, fms, red5, wowza, audio, plugin, media, av, clip, recorder, recording, webcam, cam, post, posts, WYSIWYG, editor, share, insert, camera
+Tags: video, flash, fms, red5, wowza, audio, plugin, media, av, clip, recorder, recording, webcam, cam, post, posts, WYSIWYG, editor, share, insert, camera, VideoShareVOD, VideoWhisper, short code
 Requires at least: 2.7
-Tested up to: 3.5.1
+Tested up to: 3.9.1
 Stable tag: trunk
 
 The Video Posts Webcam Recorder allows the WordPress administrators and authors to record and insert videos in their posts. A supported rtmp host is required.
@@ -16,7 +16,8 @@ Supports playback with JwPlayer plugin and HTML5 playback if conversion is suppo
 
 == Description ==
 The Video Posts Webcam Recorder allows the WordPress administrators and authors to record and insert videos in their posts.
-Supports playback with JwPlayer plugin.
+
+Integrates with the [Video Share VOD](http://wordpress.org/plugins/video-share-vod/  "Video Share / Video On Demand") WordPress plugin for advanced video management, multiple players and settings (recommended).
 
 Special requirements: This plugin has requirements beyond regular WordPress hosting specifications: a RTMP host is needed for persistent connections to manage live interactions and streaming (Wowza recommended). More details about this, including solutions are provided on the Installation section pages.
 
@@ -46,6 +47,10 @@ See a video posted with this plugin on: http://www.videochat-scripts.com/webcam-
 More information, the latest updates, other plugins and non-WordPress editions can be found at http://www.videowhisper.com/ .
 
 == Changelog ==
+
+= 1.85.1 = 
+* VideoShareVOD integration for advanced video management and playback
+* [videowhisper_recorder] Shortcoder
 
 = 1.55 =
 * Integrates VideoWhisper Video Recorder 1.55

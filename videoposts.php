@@ -3,7 +3,7 @@
 Plugin Name: Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
 Description: Video Posts Webcam Recorder
-Version: 1.55.5
+Version: 1.85.1
 Author: VideoWhisper.com
 Author URI: http://www.videowhisper.com/
 Contributors: videowhisper, VideoWhisper.com
@@ -46,19 +46,22 @@ if (!class_exists("VWvideoPosts"))
 	function VWvideoPosts() { //constructor
 
     }
+    
 	function settings_link($links) {
 	  $settings_link = '<a href="options-general.php?page=videoposts.php&mod=settings">'.__("Settings").'</a>';
 	  array_unshift($links, $settings_link);
 	  return $links;
 	}
+	
 	function recordings_link($links) {
 	  $recordings_link = '<a href="options-general.php?page=videoposts.php&mod=recordings">'.__("Recordings").'</a>';
 	  array_unshift($links, $recordings_link);
 	  return $links;
 	}
-	
-	function wpse_hold_global_post_number( $post_id, $post ) {
 
+	
+	function wpse_hold_global_post_number( $post_id, $post ) 
+	{
 	global $post_ID;
 	if($post_ID) $post_id = $post_ID;
 	$recCookie = $_COOKIE["recIdCookie"];
@@ -69,6 +72,45 @@ if (!class_exists("VWvideoPosts"))
 	$wpdb->query($sql);
 	}
 	
+	function shortcode_recorder($atts)
+	{
+	$options = get_option('VWvideoRecorderOptions');
+
+	if (class_exists("VWvideoShare"))
+	{
+	$optionsVSV = get_option( 'VWvideoShareOptions' );
+	if (!VWvideoShare::hasPriviledge($optionsVSV['shareList'])) return __('You do not have permissions to share videos!', 'videosharevod');
+	}
+				
+	$atts = shortcode_atts(array('height' => '550px'), $atts, 'videowhisper_recorder');
+	
+	$base = plugin_dir_url(__FILE__) . "posts/videowhisper/";
+	$swfurl = $base  . "videorecorder.swf";
+
+	$height = $atts['height'];
+		
+$htmlCode .= <<<EOCODE
+<div style="height:$height">
+<object height="100%" width="100%" type="application/x-shockwave-flash" data="$swfurl">
+<param name="base" value="$base" />
+<param name="movie" value="$swfurl" />
+<param bgcolor="#5a5152" />
+<param name="scale" value="noscale" />
+<param name="salign" value="lt" />
+<param name="allowFullScreen" value="true" />
+<param name="allowscriptaccess" value="always" />
+</object>
+</div>
+EOCODE;
+
+		$videowhisper = $options['videowhisper'];
+		$state = 'block' ;
+		if (!$videowhisper) $state = 'none';
+		
+		$poweredby = '<div style=\'display: ' . $state . ';\'><i><small>Powered by <a href=\'http://www.videowhisper.com\'  target=\'_blank\'>VideoWhisper</a>,<a href=\'http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments\'  target=\'_blank\'>Video Recorder</a>.</small></i></div>';
+	
+		return $htmlCode;
+	}
 	
 	function post_shortcode($content)
 	{
@@ -100,8 +142,16 @@ if (!class_exists("VWvideoPosts"))
 			//echo $player;
 			$home = home_url();
 			$streamname = $matches[1][$i];
+			
 			switch($player)
 			{
+				case 'videosharevod';
+	global $wpdb;
+	$postID = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . sanitize_file_name($streamname) . "' and post_type='video' LIMIT 0,1" );
+	
+	$playercode = do_shortcode("[videowhisper_player video=\"$postID\"]");
+		break;
+		
 				case 'vwplayer':
 				$playercode = <<<EOD
 <div id='vwplayer' style='width:$embedWidth; height:$embedHeight'><object height="100%" width="100%"><param name="movie" value=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\"><param name="scale" value="noscale"><param name="salign" value="lt"><param name="base" value="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"><param name="allowFullScreen" value="true"><param name="allowscriptaccess" value="always"><embed base="$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/"  scale="noscale" salign="lt" src=" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" height="$embedHeight" width="$embedWidth"></object></div>$poweredby
@@ -142,6 +192,8 @@ function init()
 		add_filter("plugin_action_links_$plugin",  array('VWvideoPosts','recordings_link') );
 		add_filter("the_content",array('VWvideoPosts','post_shortcode'));
 		
+		add_shortcode('videowhisper_recorder', array( 'VWvideoPosts', 'shortcode_recorder'));
+		
 		add_action( 'save_post', array('VWvideoPosts','wpse_hold_global_post_number'), null, 2 );
 		// global post ID
 	
@@ -167,9 +219,7 @@ function init()
 		  `streamname` varchar(64) NOT NULL,
 		  `time` int(12)  NOT NULL,
 		  PRIMARY KEY  (`id`)
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Video Whisper: Sessions - 2009@videowhisper.com' AUTO_INCREMENT=1;
-		
-		";
+		) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Video Whisper: Recordings - 2009@videowhisper.com' AUTO_INCREMENT=1;";
 
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			dbDelta($sql);
@@ -182,7 +232,9 @@ function init()
 			
 
 	}
-	function menu() {
+	
+	function menu() 
+	{
 	  add_options_page('Video Posts Webcam Recorder Options', 'Video Posts', 9, basename(__FILE__), array('VWvideoPosts', 'options'));
 	}
 	
@@ -262,8 +314,9 @@ function init()
 <p>For video recordings we recommend <a href="http://www.videowhisper.com/?p=Wowza+Media+Server+Hosting">Wowza RTMP hosting</a>. To enable HTML5 playback, web server with ffmpeg support must be on same physical server as RTMP so scripts have access to video files saved by streaming server.</p>
 <?php
 $detectedp[jwplayer] = 0;
+$detectedp[videosharevod] = 0;
 
-$cmd ="/usr/local/bin/ffmpeg -codecs";
+$cmd =$options['ffmpegcall'] ." -codecs";
 exec($cmd, $output, $returnvalue); 
 if ($returnvalue == 127) $ffmpegdetected = 0;
 	else $ffmpegdetected = 1;
@@ -271,15 +324,24 @@ if ($returnvalue == 127) $ffmpegdetected = 0;
 
 if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $detectedp[jwplayer] = 1;
 
+if (is_plugin_active('video-share-vod/video-share-vod.php')) $detectedp[videosharevod] = 1;
 
 ?>
 	<h4>Select Player</h4>
 	<select name='selectPlayer' id='selectPlayer'> 
-	<option value='vwplayer' <?=$options['selectPlayer'] == 'vwplayer'?"":"selected"?>>Video Whisper</option>
+	
+	<?php
+	if ($detectedp[videosharevod]) {
+	?>
+	<option value='videosharevod' <?=$options['selectPlayer'] == 'videosharevod'?"selected":""?>>Video Share VOD</option> 
+	<?php
+	}
+	?>
+	<option value='vwplayer' <?=$options['selectPlayer'] == 'vwplayer'?"selected":""?>>VideoWhisper</option>
 	<?php
  	if ($detectedp[jwplayer]) {
 	?>
-	<option value='jwplayer' <?=$options['selectPlayer'] == 'jwplayer'?"selected":""?>>Jw Player</option> 
+	<option value='jwplayer' <?=$options['selectPlayer'] == 'jwplayer'?"selected":""?>>JwPlayer</option> 
 	<?php
 	}
 	if ($ffmpegdetected == 1)
@@ -288,10 +350,19 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 	<option value='ffmpeg' <?=$options['selectPlayer'] == 'ffmpeg'?"selected":""?>>HTML5</option> 
 	<?php
 	}
-
   ?>
 	</select>
-	<p> Jw Player: 
+	<p>Video Share VOD (recommended): 
+		<?php
+ 	if ($detectedp[videosharevod]) {
+	    echo "Detected";
+	}
+	else{
+	    echo "Not Detected.";
+	}
+	?>
+<br>Video Share VOD is a free open source solution to manage videos and  setup video sharing / video on demand (VOD) features on WordPress. Includes multiple options and players. For more details see <a href='http://videosharevod.com/' target='_blank'>VideoShareVOD Home Site</a> and <a href='http://wordpress.org/plugins/video-share-vod/' target='_blank'>VideoShareVOD on WordPress</a>.</p>
+	<p>JwPlayer: 
 		<?php
  	if ($detectedp[jwplayer]) {
 	    echo "Detected";
@@ -300,7 +371,7 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 	    echo"<a href='http://wordpress.org/extend/plugins/jw-player-plugin-for-wordpress/' target='_blank'> Not Detected </a>";
 	}
 	?></p>
-	
+
 	<?php
 
 	
@@ -330,10 +401,15 @@ if (is_plugin_active('jw-player-plugin-for-wordpress/jwplayermodule.php')) $dete
 	
 	?>
 
+<h4>Shortcodes</h4>
+[videowhisper_recorder height="550px"] - Displays video recording interface on a page. Uses VideoShareVOD video sharing permissions if enabled.
+<br>[videowhisper stream="stream name"] - Displays video using configured player.
+
 <h4>FFMPEG Conversion</h4>
 <p>If ffmpeg is available use these to update parameters as needed for conversion.</p>
 <input name="ffmpegcall" type="text" id="ffmpegcall" size="100" maxlength="256" value="<?=$options['ffmpegcall']?>"/> $output_file -i $input_file
 <BR>Ex: /usr/local/bin/ffmpeg -y -s 480x360 -r 15 -vb 512k -vcodec libx264 -coder 0 -bf 0 -level 3.1 -g 30 -maxrate 768k -acodec libfaac -ac 2 -ar 22050 -ab 96k -x264opts vbv-maxrate=364:qpmin=4:ref=4
+<br>This is not used when videos are managed by VideoShareVOD (recommended).
 
 <h4>Videos directory</h4>
 <input name="directory" type="text" id="directory" size="80" maxlength="256" value="<?=$options['directory']?>"/>
