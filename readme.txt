@@ -5,7 +5,7 @@ Author URI: http://www.videowhisper.com
 Plugin Name: VideoWhisper Video Posts Webcam Recorder
 Plugin URI: http://www.videowhisper.com/?p=WordPress+Video+Recorder
 Donate link: http://www.videowhisper.com/?p=Invest
-Tags: video, flash, fms, red5, wowza, audio, plugin, media, av, clip, recorder, recording, webcam, cam, post, posts, WYSIWYG, editor, share, insert, camera, VideoShareVOD, VideoWhisper, short code
+Tags: video, flash, fms, red5, wowza, audio, plugin, media, av, clip, recorder, recording, webcam, cam, post, posts, WYSIWYG, editor, share, insert, camera, VideoShareVOD, VideoWhisper, shortcode
 Requires at least: 2.7
 Tested up to: 3.9.1
 Stable tag: trunk
@@ -20,6 +20,9 @@ The Video Posts Webcam Recorder allows the WordPress administrators and authors 
 Integrates with the [Video Share VOD](http://wordpress.org/plugins/video-share-vod/  "Video Share / Video On Demand") WordPress plugin for advanced video management, multiple players and settings (recommended).
 
 Special requirements: This plugin has requirements beyond regular WordPress hosting specifications: a RTMP host is needed for persistent connections to manage live interactions and streaming (Wowza recommended). More details about this, including solutions are provided on the Installation section pages.
+
+Recording can be done with the insert tool when editing posts or with the "videowhisper_recorder" shortcode that displays the interface to record video (uses permissions from VideoShareVOD if enabled).
+
 
 == Installation ==
 * See latest version instructions on plugin homepage: http://www.videowhisper.com/?p=WordPress+Video+Recorder+Posts+Comments
