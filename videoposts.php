@@ -423,8 +423,8 @@ EOD;
 <p>If ffmpeg is available use these to update parameters as needed for conversion.</p>
 <input name="ffmpegcall" type="text" id="ffmpegcall" size="100" maxlength="256" value="<?php echo $options['ffmpegcall']?>"/> $output_file -i $input_file
 <BR>For lower server load and higher performance, web clients should be configured to broadcast video already suitable for target device (H.264 Baseline 3.1 for most iOS devices) so only audio needs to be encoded.
-<BR>Ex.(convert audio for iOS): -vcodec copy -acodec libfaac -ac 2 -ar 22050 -ab 96k
-<BR>Ex.(convert video+audio): -vcodec libx264 -s 480x360 -r 15 -vb 512k -x264opts vbv-maxrate=364:qpmin=4:ref=4 -coder 0 -bf 0 -analyzeduration 0 -level 3.1 -g 30 -maxrate 768k -acodec libfaac -ac 2 -ar 22050 -ab 96k
+<BR>Ex.(convert audio for iOS): /usr/local/bin/ffmpeg -y -vcodec copy -acodec libfaac -ac 2 -ar 22050 -ab 96k
+<BR>Ex.(convert video+audio): /usr/local/bin/ffmpeg -y -vcodec libx264 -s 480x360 -r 15 -vb 512k -x264opts vbv-maxrate=364:qpmin=4:ref=4 -coder 0 -bf 0 -analyzeduration 0 -level 3.1 -g 30 -maxrate 768k -acodec libfaac -ac 2 -ar 22050 -ab 96k
 <BR>For advanced settings see <a href="https://developer.apple.com/library/ios/technotes/tn2224/_index.html#//apple_ref/doc/uid/DTS40009745-CH1-SETTINGSFILES">iOS HLS Supported Codecs<a> and <a href="https://trac.ffmpeg.org/wiki/Encode/AAC">FFMPEG AAC Encoding Guide</a>.
 
 <br>This is not used when videos are managed by VideoShareVOD (recommended).
