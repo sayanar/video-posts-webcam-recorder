@@ -252,7 +252,7 @@ EOD;
 				'codecProfile' => 'baseline',
 				'codecLevel' => '3.1',
 
-				'soundCodec'=> 'Speex',
+				'soundCodec'=> 'Nellymoser',
 				'soundQuality' => '9',
 				'micRate' => '22',
 
