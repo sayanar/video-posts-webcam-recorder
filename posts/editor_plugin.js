@@ -62,8 +62,8 @@
                         return {
                                 longname : 'Video Recorder plugin',
                                 author : 'VideoWhisper',
-                                authorurl : 'http://tinymce.moxiecode.com',
-                                infourl : 'http://wiki.moxiecode.com/index.php/TinyMCE:Plugins/example',
+                                authorurl : 'http://www.videowhisper.com',
+                                infourl : 'http://www.videowhisper.com',
                                 version : "1.0"
                         };
                 }

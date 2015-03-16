@@ -14,19 +14,19 @@ $videosPath = $options['directory'];
 
 	$state = 'block' ;
 	if (!$videowhisper) $state = 'none';
-	
+
 	$poweredby = '<div style=\"display: ' . $state . ';\"><i><small>Powered by <a href=\"http://www.videowhisper.com\"  target=\'_blank\'>VideoWhisper</a>,<a href=\"http://www.videowhisper.com/?p=Video+Recorder\"  target=\'_blank\'> Video Recorder</a>.</small></i></div>';
-	
+
 	$postId = 0;
 
 	$streamname = sanitize_file_name($_GET['stream']);
-	
+
 
 
 	global $current_user;
 	$current_user = wp_get_current_user();
 	$userId = $current_user->ID;
-	
+
 	global $wpdb;
 	$table_name = $wpdb->prefix."vw_videorecordings";
 	$wpdb->insert( $table_name, array( 'time' => time(), 'streamname' => $streamname,'userId' => $userId, 'postId' => $postId) );
@@ -34,9 +34,9 @@ $videosPath = $options['directory'];
 	setcookie("recIdCookie", $wpdb->insert_id, time()+3600*24,'/');
 	if($embedmode == 0)
 	{
-	
+
 	$home = home_url();
-	
+
 	switch ($player)
 	{
 		case 'videosharevod';
@@ -48,12 +48,12 @@ $videosPath = $options['directory'];
 	$playercode = addslashes($playercode);
 
 		break;
-		
+
 		case 'vwplayer':
 		$playercode = <<<EOD
 <u>$streamname</u><div  style='width:${embedWidth}px; height:${embedHeight}px'><object height=\"100%\" width=\"100%\"><param name=\"movie\" value=\" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\"><param name=\"scale\" value=\"noscale\"><param name=\"salign\" value=\"lt\"><param name=\"base\" value=\"$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/\"><param name=\"allowFullScreen\" value=\"true\"><param name=\"allowscriptaccess\" value=\"always\"><embed base=\"$home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/\"  scale=\"noscale\" salign=\"lt\" src=\" $home/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/streamplayer.swf?streamName=$streamname&amp;serverRTMP=$rtmp_server&amp;templateURL=\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" height=\"${embedHeight}px\" width=\"${embedWidth}px\"></object></div>$poweredby
 EOD;
-	
+
 		break;
 		case 'jwplayer':
 		$image = file_exists("snapshots/$streamname.jpg")?$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/$streamname.jpg":$home."/wp-content/plugins/video-posts-webcam-recorder/posts/videowhisper/snapshots/no_video.png";
@@ -61,7 +61,7 @@ EOD;
 <u>$streamname</u><div id='jwplayer1' style='width: ${embedWidth}px; height: ${embedHeight}px'><scr"+"ipt type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'></scr"+"ipt><scr"+"ipt type='text/javascript'>var flashvars = { file: '$streamname', streamer: '$rtmp_server', autostart: '$autoplay',width: '${embedWidth}px', height: '${embedHeight}px', type: 'rtmp', image: '$image' }; swfobject.embedSWF('$home/wp-content/uploads/jw-player-plugin-for-wordpress/player/player.swf','jwplayer1','$embedWidth px','$embedHeight px','9','false', flashvars,  {allowfullscreen:'true',allowscriptaccess:'always'},   {id:'jwplayer',name:'jwplayer'}  );</scr"+"ipt></div>$poweredby
 EOD;
 		break;
-		
+
 		case 'ffmpeg':
 		//echo "finished".$videosPath . $streamname  . "-ip.mp4";
 		if (file_exists($output_file = $videosPath . $streamname  . "-ip.mp4"))
@@ -73,7 +73,7 @@ EOD;
 EOD;
 		}
 		break;
-		
+
 	}
 } else
 {
@@ -82,8 +82,13 @@ EOD;
 }
 ?>
 <script type="text/javascript" src="../../../../../wp-includes/js/tinymce/tiny_mce_popup.js"></script>
-<script> 
-if (tinyMCEPopup) if (tinyMCEPopup.onInit)
+<script type="text/javascript" src="../../../../../wp-includes/js/tinymce/plugins/compat3x/plugin.min.js"></script>
+
+
+
+<script>
+if (tinyMCEPopup)
+if (tinyMCEPopup.onInit)
 {
 var RecordDialog = {
 	init : function(ed) {
@@ -95,4 +100,4 @@ tinyMCEPopup.onInit.add(RecordDialog.init, RecordDialog);
 }
 else document.location = '/';
 </script>
-  
+
